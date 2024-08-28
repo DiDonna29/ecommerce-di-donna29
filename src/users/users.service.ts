@@ -2,33 +2,46 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
-import { User } from './entities/user.entity';
+import { Users } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
-  create(createUser: User) {
+
+  async create(createUser: Users): Promise<string> {
     try {
-      this.usersRepository.save(createUser);
-      return 'Usuario creado Correctamente';
+      await this.usersRepository.save(createUser);
+      return 'Usuario creado correctamente';
     } catch (error) {
-      return error;
+      throw new Error('Error al crear el usuario');
     }
   }
 
-  findAll() {
-    return this.usersRepository.findAll();
+  async findAll(page: number = 1, limit: number = 5): Promise<Users[]> {
+    return this.usersRepository.findAll(page, limit);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<Users> {
+    const user = await this.usersRepository.findOne(id);
+    if (!user) {
+      throw new Error(`Usuario con ID ${id} no encontrado`);
+    }
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOneWithOrders(id: string): Promise<Users> {
+    const user = await this.usersRepository.findOneWithOrders(id);
+    if (!user) {
+      throw new Error(`Usuario con ID ${id} no encontrado`);
+    }
+    return user;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<Users> {
+    return await this.usersRepository.update(id, updateUserDto);
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.usersRepository.remove(id);
   }
 }

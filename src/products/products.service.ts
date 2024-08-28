@@ -1,33 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
 import { ProductsRepository } from './products.repository';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly productsRepository: ProductsRepository) {}
-  create(createProduct: Product) {
-    try {
-      this.productsRepository.save(createProduct);
-      return 'Producto creado correctamente';
-    } catch (error) {
-      return error;
-    }
+  constructor(private productsRepository: ProductsRepository) {}
+
+  getProducts(page: number, limit: number) {
+    return this.productsRepository.getProducts(page, limit);
   }
 
-  findAll() {
-    return this.productsRepository.findAll();
+  addProducts() {
+    return this.productsRepository.addProducts();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  getProduct(id: string) {
+    return this.productsRepository.getProduct(id);
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  updateProduct(id: string, product: any) {
+    return this.productsRepository.updateProduct(id, product);
   }
 }
