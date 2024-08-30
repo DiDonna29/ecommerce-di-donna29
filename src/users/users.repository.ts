@@ -27,7 +27,7 @@ export class UsersRepository {
     });
   }
 
-  async save(newUser: Users): Promise<Users | string> {
+  async createUser(newUser: Users): Promise<Users | string> {
     const existingUser = await this.usersRepository.findOneBy({
       email: newUser.email,
     });

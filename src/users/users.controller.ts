@@ -45,6 +45,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() updateUser: Partial<Users>) {
     return await this.usersService.update(id, updateUser);
   }

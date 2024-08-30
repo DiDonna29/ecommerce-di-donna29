@@ -20,8 +20,8 @@ export class OrderDetailsService {
     return 'This action adds a new orderDetail';
   }
 
-  findAll() {
-    return `This action returns all orderDetails`;
+  async findAll() {
+    return await this.orderDetailsRepository.getOrder_details();
   }
 
   findOne(id: number) {

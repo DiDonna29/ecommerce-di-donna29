@@ -15,7 +15,12 @@ export class OrderDetails {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: false,
+  })
   price: number;
 
   @OneToOne(() => Orders, (orders) => orders.orderDetails)

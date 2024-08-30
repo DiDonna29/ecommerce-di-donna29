@@ -28,11 +28,16 @@ export class OrderDetailsRepository {
     const products = await this.productsRepository.findByIds(
       orderDetailData.productIds,
     );
+
     const orderDetails = this.orderDetailsRepository.create({
       orders: order,
       products,
     });
 
     return await this.orderDetailsRepository.save(orderDetails);
+  }
+
+  async getOrder_details() {
+    return await this.orderDetailsRepository.find();
   }
 }

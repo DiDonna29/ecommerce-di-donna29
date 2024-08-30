@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { OrderDetailsService } from './order-details.service';
 import { OrderDetailsController } from './order-details.controller';
 import { CategoriesModule } from 'src/categories/categories.module';
@@ -8,7 +8,6 @@ import { Orders } from 'src/orders/entities/order.entity';
 import { Products } from 'src/products/entities/product.entity';
 import { OrderDetailsRepository } from './order-details.repository';
 import { ProductsModule } from 'src/products/products.module';
-import { UsersModule } from 'src/users/users.module';
 import { OrdersModule } from 'src/orders/orders.module';
 
 @Module({
@@ -16,8 +15,7 @@ import { OrdersModule } from 'src/orders/orders.module';
     TypeOrmModule.forFeature([OrderDetails, Orders, Products]),
     CategoriesModule,
     ProductsModule,
-    UsersModule,
-    OrdersModule,
+    forwardRef(() => OrdersModule),
   ],
   controllers: [OrderDetailsController],
   providers: [OrderDetailsService, OrderDetailsRepository],

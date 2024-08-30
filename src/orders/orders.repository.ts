@@ -19,73 +19,89 @@ export class OrderRepository {
     private usersRepository: Repository<Users>,
   ) {}
 
-  // async addOrder(orderData: any): Promise<Orders> {
-  //   const user = await this.usersRepository.findOneBy({ id: orderData.userId });
-  //   const products = await this.productsRepository.findByIds(
-  //     orderData.products.map((p) => p.id),
-  //   );
+  async addOrder(userId: string, products: any): Promise<Orders | string> {
+    let total = 0;
+    const user = await this.usersRepository.findOneBy({ id: userId });
 
-  //   // Aquí se puede calcular el total y reducir el stock
-  //   // Luego se crea la orden
-  //   const order = this.ordersRepository.create({ user, date: new Date() });
-  //   await this.ordersRepository.save(order);
+    if (!user) return 'User not found';
 
-  //   // Aquí se pueden crear los detalles de la orden
-  //   return order;
-  // }
+    const order = new Orders();
+    order.date = new Date();
+    order.user = user;
 
-  // async getOrder(id: string): Promise<Orders> {
-  //   return await this.ordersRepository.findOne({
-  //     where: { id },
-  //     relations: ['orderDetail', 'orderDetail.product'],
-  //   });
-  // }
+    const newOrder = await this.ordersRepository.save(order);
 
-  async addOrder(orderData: {
-    userId: string;
-    products: { id: string }[];
-  }): Promise<Orders> {
-    const user = await this.usersRepository.findOneBy({ id: orderData.userId });
-    if (!user) {
-      throw new Error('Usuario no encontrado');
-    }
+    const productsArray = await Promise.all(
+      products.map(async (element) => {
+        const product = await this.productsRepository.findOneBy({
+          id: element.id,
+        });
+        if (!product) return 'Product not found';
+        if (product.stock <= 0)
+          return `Product ${product.name} is out of stock`;
 
-    const products = await this.productsRepository.findByIds(
-      orderData.products.map((p) => p.id),
+        total += Number(product.price);
+        await this.productsRepository.update(
+          {
+            id: element.id,
+          },
+          {
+            stock: product.stock - 1,
+          },
+        );
+
+        // console.log(product);
+        // console.log(product.price);
+        return product;
+      }),
     );
-    const order = this.ordersRepository.create({ user, date: new Date() });
-    await this.ordersRepository.save(order);
 
-    const orderDetails = this.orderDetailsRepository.create({
-      orders: order,
-      products: [],
-    }); // Inicializa como un array vacío
+    const orderDetail = new OrderDetails();
+    orderDetail.price = Number(Number(total).toFixed(2));
+    // console.log('price', orderDetail.price);
+    orderDetail.products = productsArray;
+    // console.log('producto', orderDetail.products);
+    orderDetail.orders = newOrder;
+    // console.log('orders', orderDetail.orders);
 
-    let totalPrice = 0;
+    await this.orderDetailsRepository.save(orderDetail);
 
-    for (const product of products) {
-      if (product.stock <= 0) {
-        throw new Error(`Producto ${product.name} está fuera de stock`);
-      }
-      totalPrice += product.price;
-      product.stock -= 1; // Descontar 1 del stock
-      await this.productsRepository.save(product);
-      orderDetails.products.push(product); // Agregar el producto al array
-    }
+    const finalOrder = await this.ordersRepository.findOne({
+      where: { id: newOrder.id },
+      relations: ['orderDetails'],
+    });
+    // console.log(finalOrder);
+    return finalOrder;
+  }
 
-    orderDetails.price = totalPrice;
-    await this.orderDetailsRepository.save(orderDetails); // Guarda la instancia de orderDetails
-
-    order.orderDetails = orderDetails;
-    await this.ordersRepository.save(order);
+  async getOrder(id: string): Promise<Orders> {
+    const order = await this.ordersRepository.findOne({
+      where: { id },
+      relations: {
+        orderDetails: {
+          products: true,
+        },
+      },
+    });
+    if (!order) throw new Error('Order not found');
 
     return order;
   }
 
-  async getOrder(orderId: string): Promise<Orders> {
-    return await this.ordersRepository.findOne({
-      where: { id: orderId },
-      relations: ['orderDetails', 'orderDetails.products'],
+  async getOrders() {
+    const order = await this.ordersRepository.find({
+      relations: {
+        orderDetails: {
+          products: true,
+        },
+      },
     });
+    if (!order) throw new Error('Order not found');
+
+    return order;
+  }
+
+  async deleteOrder(id: string): Promise<void> {
+    this.ordersRepository.delete(id);
   }
 }

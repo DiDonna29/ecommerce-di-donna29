@@ -10,7 +10,8 @@ export class UsersService {
 
   async create(createUser: Users): Promise<string> {
     try {
-      await this.usersRepository.save(createUser);
+      if (createUser.email) return 'Ya está en uso este email';
+      await this.usersRepository.createUser(createUser);
       return 'Usuario creado correctamente';
     } catch (error) {
       throw new Error('Error al crear el usuario');

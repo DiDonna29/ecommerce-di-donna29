@@ -20,7 +20,7 @@ export class ProductsController {
       return this.productsService.getProducts(page, limit);
     }
     // Maneja el caso donde no se pasan `page` o `limit`
-    return this.productsService.getProducts(1, 5);
+    return this.productsService.getProducts(1, 10);
   }
 
   @Get('seeder')

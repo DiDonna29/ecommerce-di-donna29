@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { OrderDetailsService } from './order-details.service';
 import { CreateOrderDetailDto } from './dto/create-order-detail.dto';
@@ -17,37 +19,15 @@ export class OrderDetailsController {
   constructor(private readonly orderDetailsService: OrderDetailsService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async createOrderDetail(
     @Body() orderDetailData: { orderId: string; productIds: string[] },
   ): Promise<OrderDetails> {
     return await this.orderDetailsService.createOrderDetail(orderDetailData);
   }
-
-  @Post()
-  create(@Body() createOrderDetailDto: CreateOrderDetailDto) {
-    return this.orderDetailsService.create(createOrderDetailDto);
-  }
-
   @Get()
+  @HttpCode(HttpStatus.OK)
   findAll() {
     return this.orderDetailsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderDetailsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateOrderDetailDto: UpdateOrderDetailDto,
-  ) {
-    return this.orderDetailsService.update(+id, updateOrderDetailDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderDetailsService.remove(+id);
   }
 }
