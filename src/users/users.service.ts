@@ -8,11 +8,9 @@ import { Users } from './entities/user.entity';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async create(createUser: Users): Promise<string> {
+  async create(createUser: Users): Promise<Users | string> {
     try {
-      if (createUser.email) return 'Ya está en uso este email';
-      await this.usersRepository.createUser(createUser);
-      return 'Usuario creado correctamente';
+      return await this.usersRepository.createUser(createUser);
     } catch (error) {
       throw new Error('Error al crear el usuario');
     }
