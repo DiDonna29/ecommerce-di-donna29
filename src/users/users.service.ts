@@ -9,11 +9,7 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   async create(createUser: CreateUserDto): Promise<Users | string> {
-    try {
-      return await this.usersRepository.createUser(createUser);
-    } catch (error) {
-      throw new Error('Error al crear el usuario');
-    }
+    return await this.usersRepository.createUser(createUser);
   }
 
   async findAll(page: number = 1, limit: number = 5): Promise<Users[]> {
