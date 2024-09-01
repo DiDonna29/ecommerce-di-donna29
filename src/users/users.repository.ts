@@ -20,6 +20,10 @@ export class UsersRepository {
     return await this.usersRepository.findOneBy({ id });
   }
 
+  async findByEmail(email: string): Promise<Users | null> {
+    return await this.usersRepository.findOneBy({ email });
+  }
+
   async findOneWithOrders(id: string): Promise<Users> {
     return await this.usersRepository.findOne({
       where: { id },
@@ -27,16 +31,18 @@ export class UsersRepository {
     });
   }
 
-  async createUser(newUser: Users): Promise<Users | string> {
+  async createUser(User: Partial<Users>): Promise<Users | string> {
     const existingUser = await this.usersRepository.findOneBy({
-      email: newUser.email,
+      email: User.email,
     });
 
     if (existingUser) {
       return 'Este usuario ya se encuentra registrado. Por favor, usa otro correo.';
     }
 
-    return await this.usersRepository.save(newUser);
+    const newUser = await this.usersRepository.save(User);
+    // const { password, isAdmin, ...userWithOutPassword } = newUser;
+    return newUser;
   }
 
   async update(id: string, updateUser: Partial<Users>): Promise<Users> {

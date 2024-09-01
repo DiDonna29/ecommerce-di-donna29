@@ -59,7 +59,7 @@ export class Users {
     type: 'boolean',
     default: false,
   })
-  isAdmin: boolean;
+  isAdmin?: boolean;
 
   @OneToMany(() => Orders, (order: Orders) => order.user)
   @JoinColumn({ name: 'order_id' })
