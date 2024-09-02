@@ -13,6 +13,7 @@ const config = {
   database: `${process.env.DB_NAME}`,
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
+  types: ['node', 'express', 'multer'],
   autoLoadEntities: true,
   synchronize: true,
   // dropSchema: true,

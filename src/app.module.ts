@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeorm from './config/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ProductsModule,
     OrdersModule,
     OrderDetailsModule,
+    FileUploadModule,
   ],
 })
 export class AppModule implements NestModule {
