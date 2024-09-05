@@ -9,9 +9,11 @@ import {
   HttpStatus,
   UseGuards,
   ParseUUIDPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { TokenLoggerInterceptor } from 'src/token-logger-interceptor/token-logger-interceptor.interceptor';
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -28,7 +30,6 @@ export class ProductsController {
 
   @Get('seeder')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
   addProducts() {
     return this.productsService.addProducts();
   }
@@ -42,6 +43,7 @@ export class ProductsController {
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
+  @UseInterceptors(TokenLoggerInterceptor)
   updateProduct(@Query('id', ParseUUIDPipe) id: string, @Body() product: any) {
     return this.productsService.updateProduct(id, product);
   }

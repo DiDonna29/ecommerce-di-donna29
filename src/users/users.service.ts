@@ -12,7 +12,7 @@ export class UsersService {
     return await this.usersRepository.createUser(createUser);
   }
 
-  async findAll(page: number = 1, limit: number = 5): Promise<Users[]> {
+  async findAll(page: number = 1, limit: number = 10): Promise<Users[]> {
     return this.usersRepository.findAll(page, limit);
   }
 

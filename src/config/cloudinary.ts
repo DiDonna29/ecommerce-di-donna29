@@ -1,8 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { config as envConfig } from 'dotenv';
 
-// Cargar las variables de entorno desde el archivo .env
-envConfig(); // Cargar automáticamente el archivo .env
+envConfig({ path: '.env' });
 
 console.log('CLOUDINARY_CLOUD_NAME:', process.env.CLOUDINARY_CLOUD_NAME);
 console.log('CLOUDINARY_API_KEY:', process.env.CLOUDINARY_API_KEY);
