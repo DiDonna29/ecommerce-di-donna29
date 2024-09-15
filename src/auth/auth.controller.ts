@@ -27,7 +27,8 @@ export class AuthController {
       return 'Email y Password son requeridos.';
     }
 
-    return await this.authService.signIn(email, password);
+    const user = await this.authService.signIn(email, password);
+    return user;
   }
 
   @Post('signUp')

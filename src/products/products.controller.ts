@@ -12,8 +12,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/guards/authentication/auth.guard';
 import { TokenLoggerInterceptor } from 'src/token-logger-interceptor/token-logger-interceptor.interceptor';
+import { Roles } from 'src/decoratos/roles/roles.decorator';
+import { Role } from 'src/users/enum/roles.enum';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -41,8 +44,9 @@ export class ProductsController {
   }
 
   @Put(':id')
+  @Roles(Role.Admin)
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(TokenLoggerInterceptor)
   updateProduct(@Query('id', ParseUUIDPipe) id: string, @Body() product: any) {
     return this.productsService.updateProduct(id, product);

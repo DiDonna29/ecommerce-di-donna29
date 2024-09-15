@@ -8,7 +8,7 @@ import { Users } from './entities/user.entity';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async create(createUser: CreateUserDto): Promise<Users | string> {
+  async create(createUser: CreateUserDto): Promise<Partial<Users | string>> {
     return await this.usersRepository.createUser(createUser);
   }
 
@@ -16,7 +16,7 @@ export class UsersService {
     return this.usersRepository.findAll(page, limit);
   }
 
-  async findOne(id: string): Promise<Users> {
+  async findOne(id: string): Promise<Partial<Users>> {
     const user = await this.usersRepository.findOne(id);
     if (!user) {
       throw new Error(`Usuario con ID ${id} no encontrado`);
@@ -32,7 +32,10 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<Users> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Partial<Users>> {
     return await this.usersRepository.update(id, updateUserDto);
   }
 

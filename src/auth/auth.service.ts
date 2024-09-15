@@ -20,12 +20,14 @@ export class AuthService {
     if (!email || !password)
       throw new BadRequestException('Email o password son requeridos');
 
-    const user: Users = await this.userRepository.findByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
     if (!user) throw new BadRequestException('Usuario no encontrado');
-    // if (!user || user?.password !== password)
-    //   throw new BadRequestException('Email o Password incorrecto.');
-
-    const isPasswordMatch = bcrypt.compare(password, user.password);
+    if (!user.password) {
+      throw new BadRequestException(
+        'Contraseña no encontrada para el usuario.',
+      );
+    }
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch)
       throw new BadRequestException('Credencial no valida!.');
 
@@ -34,8 +36,7 @@ export class AuthService {
       email: user.email,
       isAdmin: user.isAdmin,
     };
-
-    const token = await this.jwtService.sign(userPayload);
+    const token = this.jwtService.sign(userPayload);
 
     return {
       token,

@@ -17,8 +17,11 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Users } from './entities/user.entity';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/guards/authentication/auth.guard';
 import { TokenLoggerInterceptor } from 'src/token-logger-interceptor/token-logger-interceptor.interceptor';
+import { Roles } from 'src/decoratos/roles/roles.decorator';
+import { Role } from './enum/roles.enum';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 
 @Controller('users')
 export class UsersController {
@@ -32,8 +35,9 @@ export class UsersController {
   // }
 
   @Get()
+  @Roles(Role.Admin)
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(TokenLoggerInterceptor)
   findAll() {
     return this.usersService.findAll();

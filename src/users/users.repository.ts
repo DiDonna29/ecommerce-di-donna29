@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
 
 export class UsersRepository {
   constructor(
@@ -16,12 +17,17 @@ export class UsersRepository {
     return users;
   }
 
-  async findOne(id: string): Promise<Users> {
-    return await this.usersRepository.findOneBy({ id });
+  async findOne(id: string): Promise<Partial<Users>> {
+    const newUser = await this.usersRepository.findOneBy({ id });
+    if (!newUser) throw new BadRequestException('No existe este usuario!');
+    const { password, isAdmin, ...userWithOutPassword } = newUser;
+    return userWithOutPassword;
   }
 
-  async findByEmail(email: string): Promise<Users | null> {
-    return await this.usersRepository.findOneBy({ email });
+  async findByEmail(email: string): Promise<Partial<Users | null>> {
+    const newUser = await this.usersRepository.findOneBy({ email });
+    if (!newUser) return null;
+    return newUser;
   }
 
   async findOneWithOrders(id: string): Promise<Users> {
@@ -31,7 +37,7 @@ export class UsersRepository {
     });
   }
 
-  async createUser(User: Partial<Users>): Promise<Users | string> {
+  async createUser(User: Partial<Users>): Promise<Partial<Users | string>> {
     const existingUser = await this.usersRepository.findOneBy({
       email: User.email,
     });
@@ -41,16 +47,24 @@ export class UsersRepository {
     }
 
     const newUser = await this.usersRepository.save(User);
+    if (!newUser) throw new BadRequestException('No existe este usuario!');
     // const { password, isAdmin, ...userWithOutPassword } = newUser;
-    return newUser;
+    return this.omitSensitiveData(newUser);
   }
 
-  async update(id: string, updateUser: Partial<Users>): Promise<Users> {
+  async update(
+    id: string,
+    updateUser: Partial<Users>,
+  ): Promise<Partial<Users>> {
     await this.usersRepository.update(id, updateUser);
     return this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {
     await this.usersRepository.delete(id);
+  }
+  private omitSensitiveData(user: Users): Partial<Users> {
+    const { password, isAdmin, ...userWithoutSensitiveData } = user;
+    return userWithoutSensitiveData;
   }
 }

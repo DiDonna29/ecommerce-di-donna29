@@ -15,7 +15,8 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split(' ')[1];
+    const token = request.headers['authorization']?.split(' ')[1];
+    console.log('token GUARD', token);
     if (!token) throw new BadRequestException('No hay Token proporcionado!.');
 
     try {
@@ -23,7 +24,17 @@ export class AuthGuard implements CanActivate {
       const payload = this.jwtService.verify(token, { secret });
       payload.exp = new Date(payload.exp * 1000);
       payload.iat = new Date(payload.iat * 1000);
+      console.log('payload guard', payload);
+      console.log('payload isAdmin', payload.isAdmin);
+
+      if (payload.isAdmin) {
+        payload.roles = ['admin'];
+      } else {
+        payload.roles = ['user'];
+      }
+
       request.payload = payload;
+      console.log('asignacion payload', request.payload);
       return true;
     } catch (error) {
       throw new UnauthorizedException('Token no valido.');
