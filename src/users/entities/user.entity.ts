@@ -61,7 +61,7 @@ export class Users {
   })
   isAdmin?: boolean;
 
-  @OneToMany(() => Orders, (order: Orders) => order.user)
+  @OneToMany(() => Orders, (order: Orders) => order.user, { cascade: true })
   @JoinColumn({ name: 'order_id' })
   orders: Orders[];
 }

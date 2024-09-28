@@ -17,6 +17,8 @@ import { TokenLoggerInterceptor } from 'src/token-logger-interceptor/token-logge
 import { Roles } from 'src/decoratos/roles/roles.decorator';
 import { Role } from 'src/users/enum/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Productos')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

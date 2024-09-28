@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Categorias')
 @Controller('categories')
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
@@ -10,7 +11,7 @@ export class CategoriesController {
     return this.categoriesService.addCategories();
   }
 
-    @Get()
+  @Get()
   getCategories() {
     return this.categoriesService.getCategories();
   }

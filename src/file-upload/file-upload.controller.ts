@@ -17,7 +17,8 @@ import { CreateFileUploadDto } from './dto/create-file-upload.dto';
 import { UpdateFileUploadDto } from './dto/update-file-upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/guards/authentication/auth.guard';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Carga de Imagenes')
 @Controller('files')
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}

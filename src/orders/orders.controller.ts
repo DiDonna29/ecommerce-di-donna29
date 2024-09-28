@@ -17,7 +17,8 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { Orders } from './entities/order.entity';
 import { AuthGuard } from 'src/auth/guards/authentication/auth.guard';
 import { TokenLoggerInterceptor } from 'src/token-logger-interceptor/token-logger-interceptor.interceptor';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Ordenes')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}

@@ -22,7 +22,9 @@ import { TokenLoggerInterceptor } from 'src/token-logger-interceptor/token-logge
 import { Roles } from 'src/decoratos/roles/roles.decorator';
 import { Role } from './enum/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Usuarios')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -34,6 +36,7 @@ export class UsersController {
   //   return this.usersService.create(createUser);
   // }
 
+  @ApiBearerAuth()
   @Get()
   @Roles(Role.Admin)
   @HttpCode(HttpStatus.OK)
@@ -43,6 +46,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
@@ -51,6 +55,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @Get('/orders/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
@@ -59,6 +64,7 @@ export class UsersController {
     return this.usersService.findOneWithOrders(id);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
@@ -67,6 +73,7 @@ export class UsersController {
     return await this.usersService.update(id, updateUser);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
