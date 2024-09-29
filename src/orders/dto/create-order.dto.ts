@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayMinSize, IsArray, IsNotEmpty, IsUUID } from 'class-validator';
 import { Products } from 'src/products/entities/product.entity';
+import { ProductDto } from './product.dto';
 
 export class CreateOrderDto {
   @ApiProperty({
@@ -15,11 +16,11 @@ export class CreateOrderDto {
   @ApiProperty({
     description:
       'Lista de productos en el pedido. Debe contener al menos un producto.',
-    type: [Products],
+    type: [ProductDto],
     required: true,
   })
   @IsArray()
   @IsNotEmpty()
   @ArrayMinSize(1)
-  products: Partial<Products[]>;
+  products: ProductDto[];
 }

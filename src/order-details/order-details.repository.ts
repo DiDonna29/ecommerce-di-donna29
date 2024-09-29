@@ -25,9 +25,22 @@ export class OrderDetailsRepository {
       throw new Error('Orden no encontrada');
     }
 
+    // Verificar que productIds sea un arreglo válido
+    if (
+      !Array.isArray(orderDetailData.productIds) ||
+      !orderDetailData.productIds.length
+    ) {
+      throw new Error('productIds debe ser un arreglo no vacío');
+    }
+
     const products = await this.productsRepository.findByIds(
       orderDetailData.productIds,
     );
+
+    // Manejar la situación si no se encuentran productos
+    if (products.length === 0) {
+      throw new Error('No se encontraron productos');
+    }
 
     const orderDetails = this.orderDetailsRepository.create({
       orders: order,

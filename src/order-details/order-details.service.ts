@@ -10,12 +10,18 @@ export class OrderDetailsService {
     private readonly orderDetailsRepository: OrderDetailsRepository,
   ) {}
 
-  async createOrderDetail(orderDetailData: {
-    orderId: string;
-    productIds: string[];
-  }): Promise<OrderDetails> {
-    return await this.orderDetailsRepository.createOrderDetail(orderDetailData);
+  async createOrderDetail(
+    orderDetailData: CreateOrderDetailDto,
+  ): Promise<OrderDetails> {
+    const { orderId, products } = orderDetailData;
+    const productIds = products.map((product) => product.id);
+
+    return await this.orderDetailsRepository.createOrderDetail({
+      orderId,
+      productIds,
+    });
   }
+
   create(createOrderDetailDto: CreateOrderDetailDto) {
     return 'This action adds a new orderDetail';
   }

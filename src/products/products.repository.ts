@@ -98,9 +98,19 @@ export class ProductsRepository {
   //   return '¡Productos Agregados Correctamente!.';
   // }
 
-  async updateProduct(id: string, product: Products) {
+  async updateProduct(id: string, product: Partial<Products>) {
+    // Verifica que el producto contenga al menos un campo para actualizar
+    if (!product || Object.keys(product).length === 0) {
+      throw new Error('No se han proporcionado valores para actualizar.');
+    }
+
     await this.productsRepository.update(id, product);
-    const updateProduct = await this.productsRepository.findOneBy({ id });
-    return updateProduct;
+    const updatedProduct = await this.productsRepository.findOneBy({ id });
+
+    if (!updatedProduct) {
+      throw new Error('Producto no encontrado.');
+    }
+
+    return updatedProduct;
   }
 }
